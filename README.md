@@ -1,349 +1,231 @@
-# JasperReports for PHP
 
-Package to generate reports with [JasperReports 6](http://community.jaspersoft.com/project/jasperreports-library) library through [JasperStarter v3](http://jasperstarter.sourceforge.net/) command-line tool.
+JasperStarter - Running JasperReports from command line
+--------------------------------------------------------
+
+JasperStarter is an opensource command line launcher and batch compiler for
+[JasperReports][].
+
+The official homepage is [jasperstater.cenote.de][].
+
+It has the following features:
+
+  * Run any JasperReport that needs a jdbc, csv, xml, json, jsonql or empty datasource
+  * Use with any database for which a jdbc driver is available
+  * Run reports with subreports
+  * Execute reports that need runtime parameters. Any parameter whose class has
+    a string constructor is accepted. Additionally the following types are
+    supported or have special handlers:
+    * date, image (see usage), locale
+  * Optionally prompt for report parameters
+  * Print directly to system default or given printer
+  * Optionally show printer dialog to choose printer
+  * Optionally show printpreview
+  * Export to file in the following formats:
+    * pdf, rtf, xls, xlsMeta, xlsx, docx, odt, ods, pptx, csv, csvMeta, html, xhtml, xml, jrprint
+  * Export multiple formats in one commanding call
+  * Compile, print and export in one commanding call
+  * View, print or export previously filled reports (use jrprint file as input)
+  * Can compile a whole directory of .jrxml files.
+  * Integrate in non Java applications (for example PHP, Python)
+  * Binary executable on Windows
+  * Includes JasperReports so this is the only tool you need to install
+  * "Diskless" operation using stdin and stdout for input data and output.
 
-## Install
+Requirements:
 
-```
-composer require cossou/jasperphp
-```
+  * Java 1.8 or higher
+  * A JDBC 2.1 driver for your database
 
-## Introduction
 
-This package aims to be a solution to compile and process JasperReports (.jrxml & .jasper files).
+### Quickstart
 
-### Why?
+  * Download JasperStarter from [Sourceforge][].
+  * Extract the distribution archive to any directory on your system.
+  * Add the _./bin_ directory of your installation to your searchpath (on
+    Windows: invoke setup.exe).
+  * Put your jdbc drivers in the _./jdbc_ directory of your installation or
+    use _\--jdbc-dir_ to point to a different directory.
 
-Did you ever had to create a good looking Invoice with a lot of fields for your great web app?
+Invoke JasperStarter with _\-h_ to get an overview:
 
-I had to, and the solutions out there were not perfect. Generating *HTML* + *CSS* to make a *PDF*? WTF? That doesn't make any sense! :)
+    $ jasperstarter -h
 
-Then I found **JasperReports** the best open source solution for reporting.
+Invoke JasperStarter with _process \-h_ to get help on the process command:
 
-### What can I do with this?
+    $ jasperstarter process -h
 
-Well, everything. JasperReports is a powerful tool for **reporting** and **BI**.
+Example with reportparameters:
 
-**From their website:**
+    $ jasperstarter pr report.jasper -t mysql -u myuser -f pdf -H myhost \
+     -n mydb -o report -p secret -P CustomerNo=10 StartFrom=2012-10-01
 
-> The JasperReports Library is the world's most popular open source reporting engine. It is entirely written in Java and it is able to use data coming from any kind of data source and produce pixel-perfect documents that can be viewed, printed or exported in a variety of document formats including HTML, PDF, Excel, OpenOffice and Word.
+Example with hsql using database type generic:
 
-I recommend using [Jaspersoft Studio](http://community.jaspersoft.com/project/jaspersoft-studio) to build your reports, connect it to your datasource (ex: MySQL), loop thru the results and output it to PDF, XLS, DOC, RTF, ODF, etc.
+    $ jasperstarter pr report.jasper -t generic -f pdf -o report -u sa \
+    --db-driver org.hsqldb.jdbcDriver \
+    --db-url jdbc:hsqldb:hsql://localhost
 
-*Some examples of what you can do:*
+For more information take a look in the docs directory of the distibution
+archive or read the [Usage][] page online.
 
-* Invoices
-* Reports
-* Listings
+### Python Integration using public API
 
-## Examples
+JasperStarter exposes an API which can be used with [jpy][] to
+provide direct access from Python:
 
-### The *Hello World* example.
+    #
+    # Load the JVM. See the jpy docs for details.
+    #
+    import jpyutil
+    jpyutil.init_jvm(jvm_maxmem='512M', jvm_classpath=['.../jasperstarter.jar'])
+    #
+    # Load the Java types needed.
+    #
+    import jpy
+    Arrays = jpy.get_type('java.util.Arrays')
+    File = jpy.get_type('java.io.File')
+    Report = jpy.get_type('de.cenote.jasperstarter.Report')
+    Config = jpy.get_type('de.cenote.jasperstarter.Config')
+    DsType = jpy.get_type('de.cenote.jasperstarter.types.DsType')
+    #
+    # Create the JasperStarter configuration. See Config.java for details.
+    #
+    config = Config()
+    config.setInput('jsonql.jrxml')
+    config.setOutput('contacts.pdf')
+    config.setDbType(DsType.json)
+    config.setDataFile(File('contacts.json'))
+    config.setJsonQuery('contacts.person')
+    config.setOutputFormats(Arrays.asList([]))
+    #
+    # Run the report. See Report.java for details.
+    #
+    instance = Report(config, File(config.getInput()))
+    instance.fill()
+    instance.exportPdf()
 
-Go to the examples directory in the root of the repository (`vendor/cossou/jasperphp/examples`).
-Open the `hello_world.jrxml` file with iReport or with your favorite text editor and take a look at the source code.
+See the examples/python directory for a fuller example.
 
-#### Compiling
+### Release Notes
 
-First we need to compile our `JRXML` file into a `JASPER` binary file. We just have to do this one time.
+See [Changes] for a history of changes.
 
-**Note:** You don't need to do this step if you are using *Jaspersoft Studio*. You can compile directly within the program.
 
-```php
-JasperPHP::compile(base_path('/vendor/cossou/jasperphp/examples/hello_world.jrxml'))->execute();
-```
+#### Known Bugs
 
-This command will compile the `hello_world.jrxml` source file to a `hello_world.jasper` file.
+For upcoming issues see [Issues][]
 
-**Note:** If you are using Laravel 4 run `php artisan tinker` and copy & paste the command above.
 
-#### Processing
+### Feedback
 
-Now lets process the report that we compile before:
+Feedback is always welcome! If you have any questions or proposals, don't
+hesitate to write to our [discussion][] forum.
+If you found a bug or you are missing a feature, log into our [Issuetracker][]
+and create a bug or feature request.
 
-```php
-JasperPHP::process(
-	base_path('/vendor/cossou/jasperphp/examples/hello_world.jasper'),
-	false,
-	array('pdf', 'rtf'),
-	array('php_version' => phpversion())
-)->execute();
-```
+If you like the software you can write a [review][] :-)
 
-Now check the examples folder! :) Great right? You now have 2 files, `hello_world.pdf` and `hello_world.rtf`.
 
-Check the *API* of the  `compile` and `process` functions in the file `src/JasperPHP/JasperPHP.php` file.
+### Development
 
-#### Listing Parameters
+The sourcecode is available at [bitbucket.org/cenote/jasperstarter][], the
+project website is hosted at [Sourceforge][].
 
-Querying the jasper file to examine parameters available in the given jasper report file:
+JasperStarter is build with [Maven][]. 
 
-```php
-$output = JasperPHP::list_parameters(
-		base_path('/vendor/cossou/jasperphp/examples/hello_world.jasper')
-	)->execute();
+On Linux 64 bit the launch4j-maven-plugin may fail. In this case, may you need the following libs in a 32 bit version:
 
-foreach($output as $parameter_description)
-	echo $parameter_description;
-```
+  * z1
+  * ncurses5
+  * bz2-1.0
 
-### Advanced example
+Install on Ubuntu 14.04 or above:
 
-We can also specify parameters for connecting to database:
+    $ sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
 
-```php
-JasperPHP::process(
-    base_path('/vendor/cossou/jasperphp/examples/hello_world.jasper'),
-    false,
-    array('pdf', 'rtf'),
-    array('php_version' => phpversion()),
-    array(
-      'driver' => 'postgres',
-      'username' => 'vagrant',
-      'host' => 'localhost',
-      'database' => 'samples',
-      'port' => '5433',
-    )
-  )->execute();
-```
+Install on Fedora 27 or above:
 
-## Requirements
+    $sudo dnf install ncurses-compat-libs.i686
 
-* Java JDK 1.6
-* PHP [exec()](http://php.net/manual/function.exec.php) function
-* [optional] [Mysql Connector](http://dev.mysql.com/downloads/connector/j/) (if you want to use database)
-* [optional] [Jaspersoft Studio](http://community.jaspersoft.com/project/jaspersoft-studio) (to draw and compile your reports)
+To get a distribution package run:
 
+    $ mvn package -P release
 
-## Installation
+or if you build from the current default branch you better use:
 
-### Java
+    $ mvn package -P release,snapshot
 
-Check if you already have Java installed:
+**Attention! You cannot execute** `target/jasperstarter.jar`
+**without having it\'s dependencies in** `../lib` ! See **dev** profile below!
 
-```
-$ java -version
-java version "1.6.0_51"
-Java(TM) SE Runtime Environment (build 1.6.0_51-b11-457-11M4509)
-Java HotSpot(TM) 64-Bit Server VM (build 20.51-b01-457, mixed mode)
-```
+If you want to build the Windows setup.exe, you need to have _nsis_ in your
+search path (works on linux too, you can find a compiled release in the 
+sourceforge download folder _build-tools_ for your convenience)
+an add the **windows-setup** profile to your build:
 
-If you get:
+    $ mvn package -P release,windows-setup
 
-	command not found: java
+or
 
-Then install it with: (Ubuntu/Debian)
+    $ mvn package -P release,windows-setup,snapshot
 
-	$ sudo apt-get install default-jdk
+While developing you may want to have a quicker build. The **dev** profile
+excludes some long running reports and the compressed archives. Instead it puts
+the build result into _target/jasperstarter-dev-bin_.
 
-Now run the `java -version` again and check if the output is ok.
+    $ mvn package -P dev
 
-### Composer
+Now you can execute JasperStarter without IDE:
 
-Install [Composer](http://getcomposer.org) if you don't have it.
+    $ target/jasperstarter-dev-bin/bin/jasperstarter
 
-```
-composer require cossou/jasperphp
-```
+or
 
-Or in your `composer.json` file add:
+    $ java -jar target/jasperstarter-dev-bin/lib/jasperstarter.jar
 
-```javascript
-{
-    "require": {
-		"cossou/jasperphp": "~2",
-    }
-}
-```
+During development you might want not to be annoyed by tests. So the following
+options are useful:
 
-And the just run:
+    $ mvn package -P dev -D skipTests
 
-	composer update
+or
 
-and thats it.
+    $ mvn package -P dev -D maven.test.failure.ignore=true
 
-### Using Laravel 5?
+To run JasperStarter from within your IDE add _\--jdbc-dir jdbc_ to the argument
+list of your run configuration. Otherwise you will get an error:
 
-Add `JasperPHP\JasperPHPServiceProvider::class` to config `config/app.php` in service provider
+    Error, (...)/JasperStarter/target/classes/jdbc is not a directory!
 
-File `config/app.php`
+Put your jdbc drivers in the _./jdbc_ directory of the project to invoke
+JasperStarter from within your IDE to call up a database based report.
 
-```php
-<?php
-//...
-'providers' => [
-    //...
-    Illuminate\Translation\TranslationServiceProvider::class,
-    Illuminate\Validation\ValidationServiceProvider::class,
-    Illuminate\View\ViewServiceProvider::class,
 
-    //insert jasper service provider here
-    JasperPHP\JasperPHPServiceProvider::class
-],
+### License
 
-```
+Copyright 2012-2015 Cenote GmbH.
 
-Uses in Controller by adding `use JasperPHP` after namespace
-```php
-<?php
-namespace App\Http\Controllers;
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-use JasperPHP; // put here
+   http://www.apache.org/licenses/LICENSE-2.0
 
-class SomethingController
-{
-	//...
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
-    public function generateReport()
-    {        
-        //jasper ready to call
-        JasperPHP::compile(base_path('/vendor/cossou/jasperphp/examples/hello_world.jrxml'))->execute();
-    }
-}    
-```
-
-Use in Route
-```php
-use JasperPHP\JasperPHP as JasperPHP;
-
-Route::get('/', function () {
-
-    $jasper = new JasperPHP;
-
-	// Compile a JRXML to Jasper
-    $jasper->compile(__DIR__ . '/../../vendor/cossou/jasperphp/examples/hello_world.jrxml')->execute();
-
-	// Process a Jasper file to PDF and RTF (you can use directly the .jrxml)
-    $jasper->process(
-        __DIR__ . '/../../vendor/cossou/jasperphp/examples/hello_world.jasper',
-        false,
-        array("pdf", "rtf"),
-        array("php_version" => "xxx")
-    )->execute();
-
-	// List the parameters from a Jasper file.
-    $array = $jasper->list_parameters(
-        __DIR__ . '/../../vendor/cossou/jasperphp/examples/hello_world.jasper'
-    )->execute();
-
-    return view('welcome');
-});
-```
-
-### Using Laravel 4?
-
-Add to your `app/config/app.php` providers array:
-
-```php
-	'JasperPHP\JasperPHPServiceProvider',
-```
-Now you will have the `JasperPHP` alias available.
-
-### MySQL
-
-We ship the [MySQL connector](http://dev.mysql.com/downloads/connector/j/) (v5.1.45) in the `/src/JasperStarter/jdbc/` directory.
-
-### PostgreSQL
-
-We ship the [PostgreSQL](https://jdbc.postgresql.org/) (v9.4-1212.jre6) in the `/src/JasperStarter/jdbc/` directory.
-
-Note: Laravel uses `pgsql` driver name instead of `postgres`.
-
-### SQLite
-
-We ship the [SQLite](https://www.sqlite.org/) (version v056, based on SQLite 3.6.14.2) in the `/src/JasperStarter/jdbc/` directory.
-
-```
-array(
-    'driver' => 'generic',
-    'jdbc_driver' => 'org.sqlite.JDBC',
-    'jdbc_url' => 'jdbc:sqlite:/database.sqlite'
-)
-```
-
-
-### JSON
-
-Source file example:
-
-```json
-{
-    "result":{
-        "id":26,
-        "reference":"0051711080021460005",
-        "account_id":1,
-        "user_id":2,
-        "date":"2017-11-08 00:21:46",
-        "type":"",
-        "gross":138,
-        "discount":0,
-        "tax":4.08,
-        "nett":142.08,
-        "details":[
-            {"id":26, "line": 1, "product_id": 26 },
-        ]
-    },
-    "options":{
-        "category":[
-            {"id":3,"name":"Hair care","service":0,"user_id":1, },
-        ],
-        "default":{
-            "id":1,"name":"I Like Hairdressing",
-            "description":null,
-            "address":null,
-            "website":"https:\/\/www.ilikehairdressing.com",
-            "contact_number":"+606 601 5889",
-            "country":"MY",
-            "timezone":"Asia\/Kuala_Lumpur",
-            "currency":"MYR",
-            "time_format":"24-hours",
-            "user_id":1
-        }
-    }
-}
-```
-
-Using Laravel:
-
-```php
-	public function generateReceipt($id) {
-
-        $datafile = base_path('/storage/jasper/data.json');
-        $output = base_path('/storage/jasper/data'); //indicate the name of the output PDF
-        JasperPHP::process(
-                    base_path('/resources/reports/taxinvoice80.jrxml'),
-                    $output,
-                    array("pdf"),
-                    array("msg"=>"Tax Invoice"),
-                    array("driver"=>"json", "json_query" => "data", "data_file" =>  $datafile)  
-                )->execute();
-     }
-```
-
-Some hack to JasperReport datasource is required. You need to indicate datasource expression for each table, list, and subreport.
-
-```xml
-	<datasetRun subDataset="invoice_details" uuid="a91cc22b-9a3f-45eb-9b35-244890d35fc7">
-            <dataSourceExpression>
-	       <![CDATA[((net.sf.jasperreports.engine.data.JsonDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("result.details")]]>
-	    </dataSourceExpression>
-	</datasetRun>
-```
-
-## Performance
-
-Depends on the complexity, amount of data and the resources of your machine (let me know your use case).
-
-I have a report that generates a *Invoice* with a DB connection, images and multiple pages and it takes about **3/4 seconds** to process. I suggest that you use a worker to generate the reports in the background.
-
-## Thanks
-
-Thanks to [Cenote GmbH](http://www.cenote.de/) for the [JasperStarter](http://jasperstarter.sourceforge.net/) tool.
-
-## Questions?
-
-Drop me a line on Twitter [@cossou](https://twitter.com/cossou).
-
-## License
-
-MIT
+[jasperstater.cenote.de]:http://jasperstarter.cenote.de/
+[JasperReports]:http://community.jaspersoft.com/project/jasperreports-library
+[Maven]:http://maven.apache.org/
+[Sourceforge]:http://sourceforge.net/projects/jasperstarter/
+[bitbucket.org/cenote/jasperstarter]:http://bitbucket.org/cenote/jasperstarter
+[review]:http://sourceforge.net/projects/jasperstarter/reviews
+[discussion]:http://sourceforge.net/p/jasperstarter/discussion/
+[Issuetracker]:https://cenote-issues.atlassian.net/browse/JAS
+[Usage]:http://jasperstarter.sourceforge.net/usage.html
+[Issues]:https://cenote-issues.atlassian.net/browse/JAS
+[Changes]:changes.html
+[jpy]:https://github.com/bcdev/jpy
