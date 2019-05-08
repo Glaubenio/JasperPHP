@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51fd7dcb-2ba1-4032-b941-2f2f968f0517" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/bin/jasperstarter" beforeDir="false" afterPath="$PROJECT_DIR$/bin/jasperstarter" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/JasperStarter/bin/jasperstarter" beforeDir="false" afterPath="$PROJECT_DIR$/src/JasperStarter/bin/jasperstarter" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,8 +15,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bin/jasperstarter">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="375">
+              <caret line="25" column="30" selection-start-line="25" selection-end-line="25" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/JasperStarter/bin/jasperstarter">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="375">
               <caret line="25" column="31" selection-start-line="25" selection-start-column="31" selection-end-line="25" selection-end-column="31" />
@@ -33,6 +42,7 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/bin/jasperstarter" />
+        <option value="$PROJECT_DIR$/src/JasperStarter/bin/jasperstarter" />
       </list>
     </option>
   </component>
@@ -57,6 +67,24 @@
             <path>
               <item name="JasperPHP" type="b2602c69:ProjectViewProjectNode" />
               <item name="JasperPHP" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JasperPHP" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JasperPHP" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JasperPHP" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JasperPHP" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="JasperStarter" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JasperPHP" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JasperPHP" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="JasperStarter" type="462c0819:PsiDirectoryNode" />
               <item name="bin" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -92,12 +120,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1557317928192</updated>
-      <workItem from="1557317929671" duration="36000" />
+      <workItem from="1557317929671" duration="472000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36000" />
+    <option name="totallyTimeSpent" value="472000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="50" y="22" width="1550" height="878" extended-state="0" />
@@ -129,6 +157,13 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/bin/jasperstarter">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="30" selection-start-line="25" selection-end-line="25" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/JasperStarter/bin/jasperstarter">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="25" column="31" selection-start-line="25" selection-start-column="31" selection-end-line="25" selection-end-column="31" />
