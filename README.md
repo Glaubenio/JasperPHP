@@ -2,6 +2,8 @@
 
 Package to generate reports with [JasperReports 6](http://community.jaspersoft.com/project/jasperreports-library) library through [JasperStarter v3](http://jasperstarter.sourceforge.net/) command-line tool.
 
+**This fork uses Java [nailgun](https://github.com/facebook/nailgun) for performance improve and is optimized for memory usage**
+
 ## Install
 
 ```
